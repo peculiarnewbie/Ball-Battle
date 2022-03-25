@@ -15,10 +15,13 @@ public abstract class Soldiers : MonoBehaviour
     private IEnumerator activationCoroutine;
     [SerializeField] protected bool isMoving;
     [SerializeField] protected bool activated;
-    public bool isPlayers;
     protected Renderer rend;
     protected bool isSpeedy;
     protected MatchManager matchManager;
+
+    public bool isAttacker;
+    public bool isPlayers;
+
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
