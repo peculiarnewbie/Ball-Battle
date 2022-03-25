@@ -29,7 +29,7 @@ public abstract class Soldiers : MonoBehaviour
         SetSoldierColor();
         matchManager = MatchManager.Instance;
 
-        goalTarget = matchManager.playerTarget;
+        goalTarget = matchManager.playerGoalTarget;
         ballTransform = matchManager.ballTransform;
 
         activated = false;
@@ -70,6 +70,12 @@ public abstract class Soldiers : MonoBehaviour
     }
 
     public void SoldierPlaced(){
+        if(isPlayers){
+            goalTarget = matchManager.playerGoalTarget;
+        }
+        else{
+            goalTarget = matchManager.enemyGoalTarget;
+        }
         StartCoroutine(activationCoroutine);
     }
 

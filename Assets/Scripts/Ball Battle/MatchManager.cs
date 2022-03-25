@@ -25,11 +25,13 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
     public bool isBallHeld;
 
-    public Rigidbody prefab;
-    public Rigidbody soldierRB;
+    public ObjectPool soldierPool;
+    private GameObject soldierToPlace;
+    private Soldiers soldierToPlaceScript;
+    private Rigidbody soldierToPlaceRB;
 
-    public Transform playerTarget;
-    public Transform enemyTarget;
+    public Transform playerGoalTarget;
+    public Transform enemyGoalTarget;
     public Transform ballTransform;
 
     // Start is called before the first frame update
@@ -66,35 +68,46 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     private void StartPlacing(Vector2 screenPosition, float time){
         Vector3 screenCoordinates = new Vector3(screenPosition.x, screenPosition.y, mainCamera.nearClipPlane);
         
-        var ray = RayPosition();
+        var ray = RayPosition(true);
         if(!ray.wasHit) return;
         isPlacing = true;
-        soldierRB = Instantiate(prefab, ray.position, Quaternion.identity);
+        // soldierRB = Instantiate(prefab, ray.position, Quaternion.identity);
         
+    }
+
+    private void GetSoldier(bool isPlayer){
+        soldierToPlace = soldierPool.GetPooledObject();
+        soldierToPlaceRB = soldierToPlace.GetComponent<Rigidbody>();
+        soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
+        soldierToPlaceScript.isPlayers = isPlayer;
     }
 
     private void PositionSoldier(){
         // Debug.Log(inputManager.GetPosition());
-        var ray = RayPosition();
+        var ray = RayPosition(false);
         if(!ray.wasHit) return;
 
-        Vector3 targetPosition = ray.position - soldierRB.position;
-        targetPosition = soldierRB.position + targetPosition * Time.deltaTime * 10;
-        soldierRB.MovePosition(new Vector3(targetPosition.x, soldierRB.position.y, targetPosition.z));
+        Vector3 targetPosition = ray.position - soldierToPlaceRB.position;
+        targetPosition = soldierToPlaceRB.position + targetPosition * Time.deltaTime * 10;
+        soldierToPlaceRB.MovePosition(new Vector3(targetPosition.x, soldierToPlaceRB.position.y, targetPosition.z));
             
     }
 
     private void PlaceSoldier(Vector2 screenPositoin, float time){
         Debug.Log("letgo");
         isPlacing = false;
-        soldierRB.GetComponent<Soldiers>().SoldierPlaced();
+        soldierToPlaceScript.SoldierPlaced();
     }
 
-    private (bool wasHit, Vector3 position) RayPosition(){
+    private (bool wasHit, Vector3 position) RayPosition(bool isFirst){
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(inputManager.GetPosition());
         if(Physics.Raycast(ray, out hit, 100.0f)){
             if(hit.collider.CompareTag("Player Field")){
+                if(isFirst) 
+                return (true, hit.point);
+            }
+            else if(hit.collider.CompareTag("Enemy Field")){
                 return (true, hit.point);
             }
         }

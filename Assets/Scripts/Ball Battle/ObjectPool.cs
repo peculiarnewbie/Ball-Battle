@@ -22,6 +22,11 @@ public class ObjectPool : MonoBehaviour
     }
 
     public GameObject GetPooledObject(){
+        for(int i = 0; i < amountToPool; i++){
+            if(!pooledObjects[i].activeInHierarchy){
+                return pooledObjects[i];
+            }
+        }
         return null;
     }
 
