@@ -41,7 +41,7 @@ public abstract class Soldiers : MonoBehaviour
     }
 
     protected void MoveToTarget(float speed){
-        float speedMultiplier = matchManager.soldierSpeedMultiplier;
+        float speedMultiplier = matchManager.gameSpeedMultiplier;
         //Moving rigidbody
         Vector3 targetPosition = targetTransform.position - transform.position;
         targetPosition = targetPosition.normalized;

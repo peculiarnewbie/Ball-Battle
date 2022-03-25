@@ -28,4 +28,6 @@ public class Attackers : Soldiers
         else MoveToTarget(slowSpeed);
     }
 
+    
+
 }

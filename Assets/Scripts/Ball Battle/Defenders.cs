@@ -14,4 +14,8 @@ public class Defenders : Soldiers
         activated = true;
     }
 
+    public override void BallPickupSwitch(bool value){
+        if(value) targetTransform = goalTarget;
+        else targetTransform = ballTransform;
+    }
 }

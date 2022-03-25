@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class MatchManager : MonoBehaviourSingleton<MatchManager>
 {
-    public delegate void BallPickupEvent(bool isPickedUp);
+    public delegate void BallPickupEvent(bool ballPickUp);
     public event BallPickupEvent OnBallPickup;
 
 
     private InputManager inputManager;
     private Camera mainCamera;
 
-    public float soldierSpeedMultiplier = 1f;
+    public float gameSpeedMultiplier = 1f;
 
     int match = 1;
     float matchTime = 140f;
