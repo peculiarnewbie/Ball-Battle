@@ -17,6 +17,11 @@ public class Attackers : Soldiers
         isMoving = true;
     }
 
+    public override void BallPickupSwitch(bool value){
+        if(value) targetTransform = goalTarget;
+        else targetTransform = ballTransform;
+    }
+
     private void FixedUpdate() {
         if(!isMoving) return;
         if(isSpeedy) MoveToTarget(fastSpeed);

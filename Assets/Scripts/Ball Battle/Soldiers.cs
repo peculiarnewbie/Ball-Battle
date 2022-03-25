@@ -6,6 +6,8 @@ public abstract class Soldiers : MonoBehaviour
 {
     Rigidbody rb;
     public Transform targetTransform;
+    public Transform goalTarget;
+    public Transform ballTransform;
     [SerializeField] protected float slowSpeed;
     [SerializeField] protected float fastSpeed;
     float rotationSpeed = 3f;
@@ -16,11 +18,16 @@ public abstract class Soldiers : MonoBehaviour
     public bool isPlayers;
     protected Renderer rend;
     protected bool isSpeedy;
+    protected MatchManager matchManager;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
         rend = GetComponent<Renderer>();
         SetSoldierColor();
+        matchManager = MatchManager.Instance;
+
+        goalTarget = matchManager.playerTarget;
+        ballTransform = matchManager.ballTransform;
 
         activated = false;
         isMoving = false;
@@ -28,13 +35,13 @@ public abstract class Soldiers : MonoBehaviour
         AssignStartValue();
         
         activationCoroutine = WaitforActivation(activationTime);
-        
 
+        matchManager.OnBallPickup += BallPickupSwitch;
         
     }
 
     protected void MoveToTarget(float speed){
-        float speedMultiplier = MatchManager.Instance.soldierSpeedMultiplier;
+        float speedMultiplier = matchManager.soldierSpeedMultiplier;
         //Moving rigidbody
         Vector3 targetPosition = targetTransform.position - transform.position;
         targetPosition = targetPosition.normalized;
@@ -73,7 +80,7 @@ public abstract class Soldiers : MonoBehaviour
 
     public abstract void ActivateSoldier();
 
-    
+    public abstract void BallPickupSwitch(bool value);
 
 
 }

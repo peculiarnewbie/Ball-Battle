@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MatchManager : MonoBehaviourSingleton<MatchManager>
 {
+    public delegate void BallPickupEvent(bool isPickedUp);
+    public event BallPickupEvent OnBallPickup;
+
+
     private InputManager inputManager;
     private Camera mainCamera;
 
@@ -23,6 +27,10 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
     public Rigidbody prefab;
     public Rigidbody soldierRB;
+
+    public Transform playerTarget;
+    public Transform enemyTarget;
+    public Transform ballTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +57,10 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         if(isPlacing) PositionSoldier();
         if(isPlaying) UpdateTime();
 
+    }
+
+    public void ChangeBallPickup(bool value){
+        OnBallPickup(value);
     }
 
     private void StartPlacing(Vector2 screenPosition, float time){
