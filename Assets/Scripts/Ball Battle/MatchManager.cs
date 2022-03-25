@@ -66,8 +66,6 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     private void StartPlacing(Vector2 screenPosition, float time){
-        Vector3 screenCoordinates = new Vector3(screenPosition.x, screenPosition.y, mainCamera.nearClipPlane);
-        
         var ray = RayPosition(true);
         if(!ray.wasHit) return;
         isPlacing = true;
@@ -75,9 +73,12 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         
     }
 
-    private void GetSoldier(bool isPlayer){
+    private void GetSoldier(bool isPlayer, Vector3 hit){
+        Debug.Log("press");
         soldierToPlace = soldierPool.GetPooledObject();
+        soldierToPlace.SetActive(true);
         soldierToPlaceRB = soldierToPlace.GetComponent<Rigidbody>();
+        soldierToPlaceRB.MovePosition(new Vector3(hit.x, soldierToPlaceRB.position.y, hit.z));
         soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
         soldierToPlaceScript.isPlayers = isPlayer;
     }
@@ -94,7 +95,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     private void PlaceSoldier(Vector2 screenPositoin, float time){
-        Debug.Log("letgo");
+        
         isPlacing = false;
         soldierToPlaceScript.SoldierPlaced();
     }
@@ -104,10 +105,11 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         Ray ray = Camera.main.ScreenPointToRay(inputManager.GetPosition());
         if(Physics.Raycast(ray, out hit, 100.0f)){
             if(hit.collider.CompareTag("Player Field")){
-                if(isFirst) 
+                if(isFirst) GetSoldier(true, hit.point);
                 return (true, hit.point);
             }
             else if(hit.collider.CompareTag("Enemy Field")){
+                if(isFirst) GetSoldier(false, hit.point);
                 return (true, hit.point);
             }
         }
