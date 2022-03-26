@@ -42,6 +42,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     {
         isPlacing = false;
         isPlaying = false;
+        isBallHeld = false;
 
         mainCamera = Camera.main;
         inputManager = InputManager.Instance;
@@ -66,6 +67,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     public void ChangeBallPickup(bool value){
+        isBallHeld = value;
         OnBallPickup(value);
     }
 
@@ -122,8 +124,14 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         var ray = RayPosition(false);
         if(!ray.wasHit) return;
 
-        Vector3 targetPosition = ray.position - soldierToPlaceRB.position;
-        targetPosition = soldierToPlaceRB.position + targetPosition * Time.deltaTime * 10;
+        // Vector3 targetPosition = ray.position - soldierToPlaceRB.position;
+        // targetPosition = soldierToPlaceRB.position + targetPosition * Time.deltaTime * 10;
+        // soldierToPlaceRB.MovePosition(new Vector3(targetPosition.x, soldierToPlaceRB.position.y, targetPosition.z));
+
+        float range = (ray.position - transform.position).magnitude;
+        Vector3 targetPosition = Vector3.Lerp(soldierToPlaceRB.position, ray.position, 0.02f* Mathf.Pow(range, 1f/3f));
+        // targetPosition = targetPosition.normalized;
+
         soldierToPlaceRB.MovePosition(new Vector3(targetPosition.x, soldierToPlaceRB.position.y, targetPosition.z));
             
     }

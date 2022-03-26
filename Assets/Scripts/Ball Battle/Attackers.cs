@@ -12,7 +12,8 @@ public class Attackers : Soldiers
     }
 
     public override void ActivateSoldier(){
-        targetTransform = GameObject.FindGameObjectWithTag("Ball").transform;
+        if (matchManager.isBallHeld) targetTransform = goalTarget;
+        else targetTransform = ballTransform;
         activated = true;
         isMoving = true;
     }
