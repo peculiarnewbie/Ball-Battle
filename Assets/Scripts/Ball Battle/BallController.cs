@@ -9,7 +9,7 @@ public class BallController : MonoBehaviour
     Rigidbody rb;
 
     public Transform targetTransform;
-    float speed;
+    float speed = 0.1f;
     bool isMoving;
 
     MatchManager matchManager;
@@ -20,24 +20,25 @@ public class BallController : MonoBehaviour
         isMoving = false;
     }
 
-    private void Update() {
+    private void FixedUpdate() {
         if(isMoving) MoveToTarget();
     }
 
     private void MoveToTarget(){
-        Vector3 targetPosition = targetTransform.position - transform.position;
-        targetPosition = targetPosition.normalized;
+        float range = (targetTransform.position - transform.position).magnitude;
+        Vector3 targetPosition = Vector3.Lerp(transform.position, targetTransform.position, speed* Mathf.Pow(range, 1f/3f));
+        // targetPosition = targetPosition.normalized;
 
-        rb.MovePosition(transform.position + targetPosition * Time.deltaTime * speed * matchManager.gameSpeedMultiplier);
+        rb.MovePosition(targetPosition);
+        // rb.MovePosition(transform.position + targetPosition * Time.deltaTime * speed * matchManager.gameSpeedMultiplier);
     }
 
-    private void OnCollisionEnter(Collision other) {
-        Debug.Log("wha");
+    private void OnTriggerEnter(Collider other){
         if(matchManager.isBallHeld) return;
-        if(other.collider.CompareTag("Soldier")){
+        if(other.CompareTag("Soldier")){
             Attackers attacker = other.gameObject.GetComponent<Attackers>();
-            if(attacker != null) return;
-            targetTransform = transform;
+            if(attacker == null) return;
+            targetTransform = other.transform;
             matchManager.ChangeBallPickup(true);
             isMoving = true;
         }
