@@ -15,8 +15,11 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
     int match = 1;
     float matchTime = 140f;
+    bool isPlayerAttacking = true;
+
     public Energy enemyEnergy;
     public Energy playerEnergy;
+
     public List<Attackers> attackers;
     public List<Defenders> defenders;
 
@@ -38,6 +41,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     void Start()
     {
         isPlacing = false;
+        isPlaying = false;
 
         mainCamera = Camera.main;
         inputManager = InputManager.Instance;
@@ -65,6 +69,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         OnBallPickup(value);
     }
 
+    private void UpdateTime(){
+        matchTime -= Time.deltaTime;
+        if(matchTime < 0){
+
+        }
+    }
+
+    private void ResetMatch(){
+        isPlayerAttacking = !isPlayerAttacking;
+    }
+
+    // Functions for placing soldiers, might refactor to another class
+
     private void StartPlacing(Vector2 screenPosition, float time){
         var ray = RayPosition(true);
         if(!ray.wasHit) return;
@@ -74,13 +91,20 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     private void GetSoldier(bool isPlayer, Vector3 hit){
-        Debug.Log("press");
-        soldierToPlace = soldierPool.GetPooledObject();
-        soldierToPlace.SetActive(true);
-        soldierToPlaceRB = soldierToPlace.GetComponent<Rigidbody>();
-        soldierToPlaceRB.MovePosition(new Vector3(hit.x, soldierToPlaceRB.position.y, hit.z));
+        if(isPlayer == isPlayerAttacking) soldierToPlace = soldierPool.GetPooledObject(true);
+        else soldierToPlace = soldierPool.GetPooledObject(false);
+
         soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
         soldierToPlaceScript.isPlayers = isPlayer;
+
+        soldierToPlace.SetActive(true);
+        
+        soldierToPlaceRB = soldierToPlace.GetComponent<Rigidbody>();
+        soldierToPlaceRB.MovePosition(new Vector3(hit.x, soldierToPlaceRB.position.y, hit.z));
+        
+        Debug.Log(isPlayer.ToString() + ' ' + isPlayerAttacking.ToString());
+
+        
     }
 
     private void PositionSoldier(){
@@ -98,6 +122,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         
         isPlacing = false;
         soldierToPlaceScript.SoldierPlaced();
+        
     }
 
     private (bool wasHit, Vector3 position) RayPosition(bool isFirst){
@@ -116,14 +141,5 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         return (false, Vector3.zero);
     }
 
-    private void UpdateTime(){
-        matchTime -= Time.deltaTime;
-        if(matchTime < 0){
-
-        }
-    }
-
-    private void ResetMatch(){
-
-    }
+    
 }

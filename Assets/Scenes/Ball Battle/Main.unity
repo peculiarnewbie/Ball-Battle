@@ -1298,8 +1298,8 @@ MonoBehaviour:
   defenders: []
   isBallHeld: 0
   soldierPool: {fileID: 1617021285}
-  playerGoalTarget: {fileID: 0}
-  enemyGoalTarget: {fileID: 0}
+  playerGoalTarget: {fileID: 628556550}
+  enemyGoalTarget: {fileID: 918706220}
   ballTransform: {fileID: 2105080984}
 --- !u!4 &1103433205
 Transform:

@@ -19,7 +19,6 @@ public abstract class Soldiers : MonoBehaviour
     protected bool isSpeedy;
     protected MatchManager matchManager;
 
-    public bool isAttacker;
     public bool isPlayers;
 
 
