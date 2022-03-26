@@ -18,4 +18,9 @@ public class Defenders : Soldiers
         if(value) targetTransform = ballTransform;
         else targetTransform = goalTarget;
     }
+
+    public override void RemoveSoldier()
+    {
+        matchManager.RemoveSoldier(assignedIndex, false);
+    }
 }

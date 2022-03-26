@@ -20,6 +20,7 @@ public abstract class Soldiers : MonoBehaviour
     protected MatchManager matchManager;
 
     public bool isPlayers;
+    public int assignedIndex;
 
 
     private void Start() {
@@ -87,6 +88,8 @@ public abstract class Soldiers : MonoBehaviour
     public abstract void AssignStartValue();
 
     public abstract void ActivateSoldier();
+
+    public abstract void RemoveSoldier();
 
     public abstract void BallPickupSwitch(bool value);
 

@@ -3730,6 +3730,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Soldier
       objectReference: {fileID: 0}
+    - target: {fileID: 8231551699658150714, guid: a5be5c6a8c741d24d9c29ac7d7b8e2ba,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8231551699658150718, guid: a5be5c6a8c741d24d9c29ac7d7b8e2ba,
         type: 3}
       propertyPath: m_RootOrder
@@ -3785,11 +3790,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8969734527643199906, guid: a5be5c6a8c741d24d9c29ac7d7b8e2ba,
-        type: 3}
-      propertyPath: targetTransform
-      value: 
-      objectReference: {fileID: 2105080984}
     m_RemovedComponents:
     - {fileID: 8231551699658150704, guid: a5be5c6a8c741d24d9c29ac7d7b8e2ba, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: a5be5c6a8c741d24d9c29ac7d7b8e2ba, type: 3}

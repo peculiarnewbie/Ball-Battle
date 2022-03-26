@@ -20,8 +20,8 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     public Energy enemyEnergy;
     public Energy playerEnergy;
 
-    public List<Attackers> attackers;
-    public List<Defenders> defenders;
+    public List<Soldiers> attackers;
+    public List<Soldiers> defenders;
 
     bool isPlacing;
     bool isPlaying;
@@ -91,10 +91,20 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     private void GetSoldier(bool isPlayer, Vector3 hit){
-        if(isPlayer == isPlayerAttacking) soldierToPlace = soldierPool.GetPooledObject(true);
-        else soldierToPlace = soldierPool.GetPooledObject(false);
+        // xnor
+        if(isPlayer == isPlayerAttacking){
+            soldierToPlace = soldierPool.GetPooledObject(true);
+            soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
+            attackers.Add(soldierToPlaceScript);
+            soldierToPlaceScript.assignedIndex = attackers.Count - 1;
+        } 
+        else{
+            soldierToPlace = soldierPool.GetPooledObject(false);
+            soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
+            defenders.Add(soldierToPlaceScript);
+            soldierToPlaceScript.assignedIndex = defenders.Count - 1;
+        } 
 
-        soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
         soldierToPlaceScript.isPlayers = isPlayer;
 
         soldierToPlace.SetActive(true);
@@ -139,6 +149,12 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
             }
         }
         return (false, Vector3.zero);
+    }
+
+    // heavy coupling with function in both Soldiers
+    public void RemoveSoldier(int index, bool isAttacker){
+        if(isAttacker) attackers.RemoveAt(index);
+        else defenders.RemoveAt(index);
     }
 
     

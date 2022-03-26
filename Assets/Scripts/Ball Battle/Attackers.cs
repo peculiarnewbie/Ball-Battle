@@ -28,6 +28,10 @@ public class Attackers : Soldiers
         else MoveToTarget(slowSpeed);
     }
 
+    public override void RemoveSoldier()
+    {
+        matchManager.RemoveSoldier(assignedIndex, true);
+    }
     
 
 }
