@@ -10,8 +10,8 @@ public class BallController : MonoBehaviour
     Rigidbody rb;
 
     public Transform targetTransform;
+    public bool isMoving;
     float speed = 1.5f;
-    bool isMoving;
 
     MatchManager matchManager;
 

@@ -25,7 +25,7 @@ public abstract class Soldiers : MonoBehaviour
     public bool isHoldingBall;
 
 
-    private void Start() {
+    private void Awake() {
         rb = GetComponent<Rigidbody>();
         rend = GetComponent<Renderer>();
         SetSoldierColor();
@@ -33,7 +33,9 @@ public abstract class Soldiers : MonoBehaviour
 
         goalTarget = matchManager.playerGoalTarget;
         ballTransform = matchManager.ballTransform;
+    }
 
+    private void OnEnable() {
         activated = false;
         isMoving = false;
 
@@ -42,7 +44,10 @@ public abstract class Soldiers : MonoBehaviour
         activationCoroutine = WaitforActivation(activationTime);
 
         matchManager.OnBallPickup += BallPickupSwitch;
-        
+    }
+
+    private void OnDisable() {
+        matchManager.OnBallPickup -= BallPickupSwitch;
     }
 
     protected void MoveToTarget(float speed, Vector3 targetTransformPosition){
@@ -88,7 +93,8 @@ public abstract class Soldiers : MonoBehaviour
     }
 
     public void RemoveSoldier(){
-        matchManager.RemoveSoldier(assignedIndex, isAttacker);
+        matchManager.RemoveSoldier(this, isAttacker);
+        this.gameObject.SetActive(false);
     }
 
     public abstract void AssignStartValue();

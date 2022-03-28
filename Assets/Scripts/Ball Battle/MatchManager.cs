@@ -85,6 +85,13 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
     }
 
+    private void UpdateTime(){
+        matchTime -= Time.deltaTime;
+        if(matchTime < 0){
+
+        }
+    }
+
     public void ChangeBallPickup(bool value){
         isBallHeld = value;
         OnBallPickup(value);
@@ -112,12 +119,9 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         }
 
         if(closestIndex == -1){
-            Debug.Log("if");
             isBallHeld = false;
         }
         else{
-            Debug.Log("index " + closestIndex.ToString());
-            Debug.Log("size " + attackers.Count.ToString());
             Soldiers target = attackers[closestIndex];
             target.isHoldingBall = true;
             ballController.targetTransform = target.transform;
@@ -125,11 +129,8 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         }
     }
 
-    private void UpdateTime(){
-        matchTime -= Time.deltaTime;
-        if(matchTime < 0){
-
-        }
+    public void AttackerScored(){
+        
     }
 
     /* Further down are functions for placing soldiers
@@ -257,9 +258,9 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     /* heavy coupling with function in both Soldiers */
-    public void RemoveSoldier(int index, bool isAttacker){
-        if(isAttacker) attackers.RemoveAt(index);
-        else defenders.RemoveAt(index);
+    public void RemoveSoldier(Soldiers soldier, bool isAttacker){
+        if(isAttacker) attackers.Remove(soldier);
+        else defenders.Remove(soldier);
     }
 
     
