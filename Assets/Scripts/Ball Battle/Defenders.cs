@@ -6,6 +6,7 @@ public class Defenders : Soldiers
 {
     float radius = 17.5f;
     bool isChasing = false;
+    bool isBeingPlaced = true;
     bool isGoingBack = false;
     Vector3 origin;
     public float chaseTreshold = 2f;
@@ -17,8 +18,9 @@ public class Defenders : Soldiers
     }
 
     private void FixedUpdate() {
+        if(isBeingPlaced) return;
         if(isChasing && !matchManager.ballController.isbeingPassed) ChaseSoldier();
-        else if(CheckIfOnOrigin()) MoveToTarget(fastSpeed, origin);;
+        else if(!CheckIfOnOrigin()) MoveToTarget(fastSpeed, origin);;
     }
 
     public override void AssignStartValue(){
@@ -34,6 +36,7 @@ public class Defenders : Soldiers
     public override void ActivateSoldier(){
         activated = true;
         isMoving = true;
+        isBeingPlaced = false;
         origin = new Vector3(transform.position.x, transform.position.y, transform.position.z);
     }
 
