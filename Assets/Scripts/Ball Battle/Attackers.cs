@@ -9,6 +9,7 @@ public class Attackers : Soldiers
         fastSpeed = 1.5f;
         activationTime = 2.5f;
         isSpeedy = true;
+        isAttacker = true;
     }
 
     public override void ActivateSoldier(){
@@ -18,6 +19,12 @@ public class Attackers : Soldiers
         isMoving = true;
     }
 
+    public override void DeactivateSoldier(){
+        activated = false;
+        isMoving = false;
+        StartCoroutine(WaitforActivation(activationTime));
+    }
+
     public override void BallPickupSwitch(bool value){
         if(value) targetTransform = goalTarget;
         else targetTransform = ballTransform;
@@ -25,13 +32,8 @@ public class Attackers : Soldiers
 
     private void FixedUpdate() {
         if(!isMoving) return;
-        if(isSpeedy) MoveToTarget(fastSpeed);
-        else MoveToTarget(slowSpeed);
-    }
-
-    public override void RemoveSoldier()
-    {
-        matchManager.RemoveSoldier(assignedIndex, true);
+        if(isHoldingBall) MoveToTarget(slowSpeed, targetTransform.position);
+        else MoveToTarget(fastSpeed, targetTransform.position);
     }
     
 
