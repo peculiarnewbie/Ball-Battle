@@ -38,8 +38,11 @@ public class Energy : MonoBehaviour
         }
     }
 
-    public void UseEnergy(int cost){
-        if(actualEnergy >= 6f) actualEnergy = 4f; //to keep value from exceeding 6
-        else actualEnergy -= 2f;
+    public bool UseEnergy(int cost){
+        if(activatedEnergy < cost) return false;
+
+        if(actualEnergy >= 1f) actualEnergy = 1f; //to keep value from exceeding 6
+        actualEnergy -= (float) cost/6f;
+        return true;
     }
 }

@@ -12,15 +12,17 @@ public abstract class Soldiers : MonoBehaviour
     [SerializeField] protected float fastSpeed;
     float rotationSpeed = 3f;
     [SerializeField] protected float activationTime;
-    private IEnumerator activationCoroutine;
+    protected IEnumerator activationCoroutine;
     [SerializeField] protected bool isMoving;
-    [SerializeField] protected bool activated;
+    public bool activated;
     protected Renderer rend;
     protected bool isSpeedy;
     protected MatchManager matchManager;
 
     public bool isPlayers;
+    public bool isAttacker;
     public int assignedIndex;
+    public bool isHoldingBall;
 
 
     private void Start() {
@@ -43,16 +45,16 @@ public abstract class Soldiers : MonoBehaviour
         
     }
 
-    protected void MoveToTarget(float speed){
+    protected void MoveToTarget(float speed, Vector3 targetTransformPosition){
         float speedMultiplier = matchManager.gameSpeedMultiplier;
         //Moving rigidbody
-        Vector3 targetPosition = targetTransform.position - transform.position;
+        Vector3 targetPosition = targetTransformPosition - transform.position;
         targetPosition = targetPosition.normalized;
 
         rb.MovePosition(transform.position + targetPosition * Time.deltaTime * speed * speedMultiplier);
         
         //Rotating rigidbody
-        Vector3 localTarget = transform.InverseTransformPoint(targetTransform.position);
+        Vector3 localTarget = transform.InverseTransformPoint(targetTransformPosition);
 
         float angle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
 
@@ -85,11 +87,15 @@ public abstract class Soldiers : MonoBehaviour
         ActivateSoldier();
     }
 
+    public void RemoveSoldier(){
+        matchManager.RemoveSoldier(assignedIndex, isAttacker);
+    }
+
     public abstract void AssignStartValue();
 
     public abstract void ActivateSoldier();
 
-    public abstract void RemoveSoldier();
+    public abstract void DeactivateSoldier();
 
     public abstract void BallPickupSwitch(bool value);
 

@@ -1311,16 +1311,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8043e438673c8114da9b160d9e29ce70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSpeedMultiplier: 1
+  gameSpeedMultiplier: 5
+  matchTime: 140
+  isPlayerAttacking: 1
   enemyEnergy: {fileID: 1169406581}
   playerEnergy: {fileID: 170396398}
   attackers: []
   defenders: []
   isBallHeld: 0
   soldierPool: {fileID: 1617021285}
+  ballTransform: {fileID: 2105080984}
+  ballController: {fileID: 0}
   playerGoalTarget: {fileID: 628556550}
   enemyGoalTarget: {fileID: 918706220}
-  ballTransform: {fileID: 2105080984}
+  playerField: {fileID: 0}
+  enemyField: {fileID: 0}
 --- !u!4 &1103433205
 Transform:
   m_ObjectHideFlags: 0
@@ -2916,7 +2921,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2105080980}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2998,6 +3003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee7301fa3f2855646bae501c922d7c04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isbeingPassed: 0
   targetTransform: {fileID: 0}
 --- !u!4 &2145835460 stripped
 Transform:
