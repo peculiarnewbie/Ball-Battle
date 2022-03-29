@@ -712,7 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1289621367}
   camController: {fileID: 2056951822}
-  gameSpeedMultiplier: 4
+  gameSpeedMultiplier: 3
   match: 0
   matchTime: 140
   isPlayerAttacking: 1
@@ -2352,7 +2352,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1076099670
 RectTransform:
   m_ObjectHideFlags: 0

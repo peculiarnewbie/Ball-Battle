@@ -83,7 +83,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Ball Battle/Main.unity
     guid: 95550f74defcd0643bf45f6aca154f9c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Ball Battle/AR.unity
     guid: 99c2a3e943bdcee43927599e5e2c063c
   m_configObjects:

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Defenders : Soldiers
 {
-    float radius = 17.5f;
+    float radius = 8.75f;
     bool isChasing = false;
     bool isGoingBack = false;
     Vector3 origin;
