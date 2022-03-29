@@ -17,9 +17,10 @@ public class Defenders : Soldiers
     }
 
     private void FixedUpdate() {
+        rangeIndicator.transform.position = origin;
         if(isBeingPlaced) return;
         if(isChasing && !matchManager.ballController.isbeingPassed) ChaseSoldier();
-        else if(!CheckIfOnOrigin()) MoveToTarget(fastSpeed, origin);;
+        else if(!CheckIfOnOrigin()) MoveToTarget(fastSpeed, origin);
     }
 
     public override void AssignStartValue(){
@@ -28,19 +29,23 @@ public class Defenders : Soldiers
         activationTime = 4f;
         isSpeedy = false;
         isAttacker = false;
+        
 
         matchManager.OnAttackerCaught += AttackerCaught;
     }
 
     public override void ActivateSoldier(){
+        rangeIndicator.SetActive(true);
         activated = true;
         isMoving = true;
+        animationKeys.PlayAnimation("Activate");
         SetSoldierColor();
         isBeingPlaced = false;
         origin = new Vector3(transform.position.x, transform.position.y, transform.position.z);
     }
 
     public override void DeactivateSoldier(){
+        rangeIndicator.SetActive(false);
         isChasing = false;
         activated = false;
         SetSoldierColor();

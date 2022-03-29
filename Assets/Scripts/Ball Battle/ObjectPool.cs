@@ -16,6 +16,7 @@ public class ObjectPool : MonoBehaviour
         GameObject tmp;
         for(int i = 0; i < amountToPool; i++){
             tmp = Instantiate(objectToPool);
+            tmp.transform.parent = this.transform;
             tmp.SetActive(false);
             pooledObjects.Add(tmp);
             if(tmp.CompareTag("Soldier")){

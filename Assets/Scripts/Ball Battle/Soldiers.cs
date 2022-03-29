@@ -16,9 +16,12 @@ public abstract class Soldiers : MonoBehaviour
     [SerializeField] protected bool isMoving;
     public bool activated;
     protected Renderer rend;
+    protected GameObject rangeIndicator;
+    public GameObject holdingIndicator;
     protected bool isSpeedy;
     protected MatchManager matchManager;
     protected bool isBeingPlaced = true;
+    public SoldierAnimations animationKeys;
 
     public bool isPlayers;
     public bool isAttacker;
@@ -29,6 +32,9 @@ public abstract class Soldiers : MonoBehaviour
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         rend = GetComponent<Renderer>();
+        rangeIndicator = GetComponentInChildren<RangeIndicator>().gameObject;
+        holdingIndicator = GetComponentInChildren<HoldingIndicator>().gameObject;
+        animationKeys = GetComponent<SoldierAnimations>();
         
         matchManager = MatchManager.Instance;
     }
@@ -39,6 +45,9 @@ public abstract class Soldiers : MonoBehaviour
         activated = false;
         isMoving = false;
         isBeingPlaced = true;
+
+        rangeIndicator.SetActive(false);
+        holdingIndicator.SetActive(false);
 
         AssignStartValue();
         SetSoldierColor();
@@ -92,6 +101,8 @@ public abstract class Soldiers : MonoBehaviour
 
     public void SoldierPlaced(){
         if(!this.gameObject.activeInHierarchy) return;
+        transform.localScale = new Vector3(2f, 2f, 2f);
+        animationKeys.PlayAnimation("Place");
         if(isPlayers){
             goalTarget = matchManager.playerGoalTarget;
         }

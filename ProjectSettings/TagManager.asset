@@ -9,6 +9,7 @@ TagManager:
   - Enemy Field
   - Player Field
   - Ball
+  - Range Indicator
   layers:
   - Default
   - TransparentFX

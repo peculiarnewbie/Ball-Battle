@@ -7,9 +7,12 @@ public class UIController : MonoBehaviour
 {
     [SerializeField] Text enemyScore;
     [SerializeField] Text playerScore;
+    [SerializeField] Text matchText;
     [SerializeField] Text enemyTeam;
     [SerializeField] Text playerTeam;
     [SerializeField] Text timeText;
+    [SerializeField] GameObject resultUI;
+    [SerializeField] Text resultText;
     MatchManager matchManager;
 
     // Start is called before the first frame update
@@ -17,7 +20,10 @@ public class UIController : MonoBehaviour
     {
         matchManager = MatchManager.Instance;
 
+        resultUI.SetActive(false);
+
         matchManager.OnMatchStart += UpdateTeamName;
+        matchManager.OnGameEnd += ShowResult;
     }
 
     // Update is called once per frame
@@ -29,7 +35,7 @@ public class UIController : MonoBehaviour
     private void UpdateTexts(){
         enemyScore.text = matchManager.enemyScore.ToString();
         playerScore.text = matchManager.playerScore.ToString();
-        timeText.text = matchManager.matchTime.ToString("F0");
+        timeText.text = matchManager.matchTime.ToString("F0") + "s";
     }
 
     private void UpdateTeamName(){
@@ -40,6 +46,22 @@ public class UIController : MonoBehaviour
         else{
             enemyTeam.text = "Attacker";
             playerTeam.text = "Defender";
+        }
+        matchText.text = "Round " + matchManager.match.ToString();
+    }
+
+    private void ShowResult(int result){
+        resultUI.SetActive(true);
+        switch(result){
+            case 0:
+                resultText.text = "Draw";
+                break;
+            case 1:
+                resultText.text = "Player Wins";
+                break;
+            case 2:
+                resultText.text = "Enemy Wins";
+                break;
         }
     }
 }

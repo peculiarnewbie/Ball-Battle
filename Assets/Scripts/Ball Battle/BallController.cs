@@ -67,6 +67,7 @@ public class BallController : MonoBehaviour
     public void AttachToAttacker(Soldiers attacker){
         if(attacker == null) return;
         attacker.isHoldingBall = true;
+        attacker.holdingIndicator.SetActive(true);
         targetTransform = attacker.transform;
         matchManager.ChangeBallPickup(true);
         isMoving = true;

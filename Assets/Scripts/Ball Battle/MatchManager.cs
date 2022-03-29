@@ -12,15 +12,17 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     public event ScoreEvent OnScore;
     public delegate void MatchStartEvent();
     public event MatchStartEvent OnMatchStart;
+    public delegate void GameEndEvent(int result);
+    public event GameEndEvent OnGameEnd;
 
 
     private InputManager inputManager;
-    private Camera mainCamera;
+    public Camera mainCamera;
     [SerializeField] CameraController camController;
 
     public float gameSpeedMultiplier = 1f;
 
-    int match = 0;
+    public int match = 0;
     public float matchTime = 140f;
     public bool isPlayerAttacking = true;
 
@@ -59,7 +61,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         enemyField = GameObject.FindGameObjectWithTag("Enemy Field").GetComponent<Collider>();
         ballController = ballTransform.GetComponent<BallController>();
 
-        mainCamera = Camera.main;
+        // mainCamera = Camera.main;
         inputManager = InputManager.Instance;
         inputManager.OnStartTouch += StartPlacing;
         inputManager.OnEndTouch += PlaceSoldier;
@@ -105,15 +107,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         matchTime -= Time.deltaTime;
         if(matchTime < 0){
             isPlaying = false;
-            Scored(false);
+            Scored(false, true);
         }
     }
 
-    public void Scored(bool isAttacker){
-        Debug.Log("wha");
-        if(isPlayerAttacking == isAttacker) playerScore += 1;
-        else enemyScore += 1;
+    public void Scored(bool isAttacker, bool isDraw){
+        Debug.Log("Scored");
+
+        if (!isDraw){
+            if(isPlayerAttacking == isAttacker) playerScore += 1;
+            else enemyScore += 1;
+        }
         if(OnScore != null) OnScore();
+
         StartCoroutine(MatchTransition());
 
     }
@@ -125,9 +131,13 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
         RemoveAllSoldiers();
 
-        // Start Match
-
-        StartMatch();
+        if(match == 5){
+            int result = 0;
+            if(playerScore > enemyScore) result = 1;
+            else if(enemyScore < playerScore) result = 2;
+            if(OnGameEnd!=null) OnGameEnd(result);
+        }
+        else StartMatch();
 
         yield return null;
     }
@@ -142,9 +152,12 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         float closestRange = 100f;
         int closestIndex = -1;
         int i = 0;
+        Soldiers target = null;
         foreach(Soldiers soldier in attackers){
             if(!soldier.activated || soldier.isHoldingBall) {
                 if(soldier.isHoldingBall){
+                    soldier.animationKeys.PlayAnimation("Caught");
+                    soldier.holdingIndicator.SetActive(false);
                     soldier.DeactivateSoldier();
                     soldier.isHoldingBall = false;
                 }
@@ -153,17 +166,21 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
             };
             float range = Vector3.Distance(ballTransform.position, soldier.transform.position);
             if(range < closestRange){
+                Debug.Log(soldier);
                 closestRange = range;
                 closestIndex = i;
+                target = soldier;
             }
         }
 
         if(closestIndex == -1){
             isBallHeld = false;
+            Scored(false, false);
         }
         else{
-            Soldiers target = attackers[closestIndex];
+            if(target == null) target = attackers[closestIndex];
             target.isHoldingBall = true;
+            target.holdingIndicator.SetActive(true);
             ballController.targetTransform = target.transform;
             ballController.isbeingPassed = true;
         }
@@ -201,7 +218,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     private (bool wasHit, Vector3 position) RayPosition(bool isFirst){
         // if(!isFirst && !isPlacing) return (false, Vector3.zero);
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(inputManager.GetPosition());
+        Ray ray = mainCamera.ScreenPointToRay(inputManager.GetPosition());
         if(Physics.Raycast(ray, out hit, 100.0f)){
             if(hit.collider == playerField){
                 if(isFirst) GetSoldier(true, hit.point);
@@ -231,6 +248,9 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         soldierToPlaceScript = soldierToPlace.GetComponent<Soldiers>();
         soldierToPlaceScript.isPlayers = isPlayer;
         soldierToPlace.SetActive(true);
+
+        if(isPlayer) soldierToPlace.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        else soldierToPlace.transform.rotation = Quaternion.Euler(new Vector3(0f,180f,0f));
         
         soldierToPlaceRB = soldierToPlace.GetComponent<Rigidbody>();
         soldierToPlaceRB.MovePosition(new Vector3(hit.x, soldierToPlaceRB.position.y, hit.z));
@@ -251,7 +271,8 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         soldierToPlaceRB.isKinematic = false;
         soldierToPlaceRB.velocity = new Vector3(0f, 0f, 0f);
         soldierToPlaceRB.angularVelocity = new Vector3(0f, 0f, 0f);
-        soldierToPlace.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        soldierToPlace.transform.localScale = new Vector3(2f, 2f, 2f);
+        
 
         StartCoroutine(WaitForEnergy(soldierToPlaceScript));
          

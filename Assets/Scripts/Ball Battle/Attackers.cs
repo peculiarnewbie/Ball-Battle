@@ -11,6 +11,7 @@ public class Attackers : Soldiers
         activationTime = 2.5f;
         isSpeedy = true;
         isAttacker = true;
+        rangeIndicator.SetActive(false);
     }
 
     public override void ActivateSoldier(){
@@ -23,6 +24,7 @@ public class Attackers : Soldiers
         }
         activated = true;
         isMoving = true;
+        animationKeys.PlayAnimation("Activate");
         SetSoldierColor();
     }
 
@@ -53,10 +55,10 @@ public class Attackers : Soldiers
 
         if(isAtEnd){
             if(isHoldingBall){
-                if(!matchManager.ballController.isbeingPassed) matchManager.Scored(true);
+                if(!matchManager.ballController.isbeingPassed) matchManager.Scored(true, false);
                 else{
                     matchManager.ballController.isMoving = false;
-                    matchManager.isBallHeld = false;
+                    matchManager.ChangeBallPickup(false);
                     isHoldingBall = false;
                     RemoveSoldier();
                 }
