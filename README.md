@@ -1,3 +1,3 @@
 # Ball Battle
 
-![basic view](./Assets/UI/BallBattle demo.gif)
+![basic view](https://github.com/peculiarnewbie/AR-Ball-Battle/blob/main/Assets/UI/BallBattle%20demo.gif)
