@@ -8,14 +8,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     public event BallPickupEvent OnBallPickup;
     public delegate void AttackerCaughtEvent();
     public event AttackerCaughtEvent OnAttackerCaught;
+    public delegate void ScoreEvent();
+    public event ScoreEvent OnScore;
+    public delegate void MatchStartEvent();
+    public event MatchStartEvent OnMatchStart;
 
 
     private InputManager inputManager;
     private Camera mainCamera;
+    [SerializeField] CameraController camController;
 
     public float gameSpeedMultiplier = 1f;
 
-    int match = 1;
+    int match = 0;
     public float matchTime = 140f;
     public bool isPlayerAttacking = true;
 
@@ -29,6 +34,9 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     bool isPlayerPlacing;
     bool isEnemyPlacing;
     bool isPlaying;
+
+    public int enemyScore;
+    public int playerScore;
 
     public bool isBallHeld;
 
@@ -60,11 +68,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     }
 
     private void StartMatch(){
+        match++;
         if(match%2 == 1) isPlayerAttacking = true;
         else isPlayerAttacking = false;
 
+        if(OnMatchStart != null) OnMatchStart();
+
+        matchTime = 140f;
+
+        enemyEnergy.actualEnergy = 0.0f;
+        playerEnergy.actualEnergy = 0.0f;
+
         isPlacing = false;
-        isPlaying = false;
+        isPlaying = true;
         isBallHeld = false;
         isPlayerPlacing = false;
         isEnemyPlacing = false;
@@ -88,13 +104,37 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     private void UpdateTime(){
         matchTime -= Time.deltaTime;
         if(matchTime < 0){
-
+            isPlaying = false;
+            Scored(false);
         }
+    }
+
+    public void Scored(bool isAttacker){
+        Debug.Log("wha");
+        if(isPlayerAttacking == isAttacker) playerScore += 1;
+        else enemyScore += 1;
+        if(OnScore != null) OnScore();
+        StartCoroutine(MatchTransition());
+
+    }
+
+    public IEnumerator MatchTransition(){
+
+        yield return new WaitForEndOfFrame();
+        // Explosion & Score Effects
+
+        RemoveAllSoldiers();
+
+        // Start Match
+
+        StartMatch();
+
+        yield return null;
     }
 
     public void ChangeBallPickup(bool value){
         isBallHeld = value;
-        OnBallPickup(value);
+        if(OnBallPickup != null) OnBallPickup(value);
     }
 
     public void AttackerCaught(){
@@ -127,10 +167,6 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
             ballController.targetTransform = target.transform;
             ballController.isbeingPassed = true;
         }
-    }
-
-    public void AttackerScored(){
-        
     }
 
     /* Further down are functions for placing soldiers
@@ -233,12 +269,13 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     private IEnumerator WaitForEnergy(Soldiers soldier){
         if(soldier.isPlayers) isPlayerPlacing = true;
         else isEnemyPlacing = true;
+        AddSoldierToList(soldier.isAttacker, soldier);
         
         while(!CheckEnergy(soldier.isAttacker, soldier.isPlayers)){
             yield return null; /* waits a frame each frame until enough energy */
         }
         soldier.SoldierPlaced();
-        AddSoldierToList(soldier.isAttacker, soldier);
+        
 
         if(soldier.isPlayers) isPlayerPlacing = false;
         else isEnemyPlacing = false;
@@ -263,5 +300,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         else defenders.Remove(soldier);
     }
 
-    
+    private void RemoveAllSoldiers(){
+        if(attackers.Count != 0){
+            foreach(Soldiers attacker in attackers){
+                attacker.gameObject.SetActive(false);
+            }
+            attackers.Clear();
+        }  
+
+        if(defenders.Count != 0){
+            foreach(Soldiers defender in defenders){
+                defender.gameObject.SetActive(false);
+            }
+            defenders.Clear();
+        }
+    }
 }

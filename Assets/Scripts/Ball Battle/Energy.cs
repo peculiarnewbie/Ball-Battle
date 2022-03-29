@@ -7,7 +7,7 @@ public class Energy : MonoBehaviour
 {
     [SerializeField] Image energyBar;
     [SerializeField] Image activatedBar;
-    float actualEnergy;
+    public float actualEnergy;
 
     int filledEnergy;
     public int activatedEnergy;

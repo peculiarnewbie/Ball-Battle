@@ -5,6 +5,7 @@ using UnityEngine;
 public class Attackers : Soldiers
 {
     public override void AssignStartValue(){
+        isHoldingBall = false;
         slowSpeed = 0.75f;
         fastSpeed = 1.5f;
         activationTime = 2.5f;
@@ -14,14 +15,21 @@ public class Attackers : Soldiers
 
     public override void ActivateSoldier(){
         if (matchManager.isBallHeld) targetTransform = goalTarget;
-        else targetTransform = ballTransform;
+        else {
+            if(Vector3.Distance(transform.position, matchManager.ballTransform.position) <= 2f){
+                matchManager.ballController.AttachToAttacker(this);
+            }
+            else targetTransform = ballTransform;
+        }
         activated = true;
         isMoving = true;
+        SetSoldierColor();
     }
 
     public override void DeactivateSoldier(){
         activated = false;
         isMoving = false;
+        SetSoldierColor();
         StartCoroutine(WaitforActivation(activationTime));
     }
 
@@ -45,7 +53,7 @@ public class Attackers : Soldiers
 
         if(isAtEnd){
             if(isHoldingBall){
-                if(!matchManager.ballController.isbeingPassed) matchManager.AttackerScored();
+                if(!matchManager.ballController.isbeingPassed) matchManager.Scored(true);
                 else{
                     matchManager.ballController.isMoving = false;
                     matchManager.isBallHeld = false;

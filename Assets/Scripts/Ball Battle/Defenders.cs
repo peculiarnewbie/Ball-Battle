@@ -6,7 +6,6 @@ public class Defenders : Soldiers
 {
     float radius = 17.5f;
     bool isChasing = false;
-    bool isBeingPlaced = true;
     bool isGoingBack = false;
     Vector3 origin;
     public float chaseTreshold = 2f;
@@ -36,6 +35,7 @@ public class Defenders : Soldiers
     public override void ActivateSoldier(){
         activated = true;
         isMoving = true;
+        SetSoldierColor();
         isBeingPlaced = false;
         origin = new Vector3(transform.position.x, transform.position.y, transform.position.z);
     }
@@ -43,6 +43,7 @@ public class Defenders : Soldiers
     public override void DeactivateSoldier(){
         isChasing = false;
         activated = false;
+        SetSoldierColor();
         StartCoroutine(WaitforActivation(activationTime));
     }
 
@@ -52,7 +53,7 @@ public class Defenders : Soldiers
     }
 
     private void AttackerCaught(){
-
+        
     }
 
     private bool CheckForBallHolder(){

@@ -18,6 +18,7 @@ public abstract class Soldiers : MonoBehaviour
     protected Renderer rend;
     protected bool isSpeedy;
     protected MatchManager matchManager;
+    protected bool isBeingPlaced = true;
 
     public bool isPlayers;
     public bool isAttacker;
@@ -28,26 +29,35 @@ public abstract class Soldiers : MonoBehaviour
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         rend = GetComponent<Renderer>();
-        SetSoldierColor();
+        
         matchManager = MatchManager.Instance;
-
-        goalTarget = matchManager.playerGoalTarget;
-        ballTransform = matchManager.ballTransform;
     }
 
     private void OnEnable() {
+        Debug.Log("enabled");
+
         activated = false;
         isMoving = false;
+        isBeingPlaced = true;
 
         AssignStartValue();
-        
+        SetSoldierColor();
+
         activationCoroutine = WaitforActivation(activationTime);
 
+        goalTarget = matchManager.playerGoalTarget;
+        ballTransform = matchManager.ballTransform;
+
         matchManager.OnBallPickup += BallPickupSwitch;
+        matchManager.OnScore += StopMoving;
     }
 
     private void OnDisable() {
+        activated = false;
+        isMoving = false;
+        
         matchManager.OnBallPickup -= BallPickupSwitch;
+        matchManager.OnScore -= StopMoving;
     }
 
     protected void MoveToTarget(float speed, Vector3 targetTransformPosition){
@@ -69,14 +79,19 @@ public abstract class Soldiers : MonoBehaviour
         rb.MoveRotation(rb.rotation * deltaRotation);
     }
 
-    private void SetSoldierColor(){
+    protected void SetSoldierColor(){
         if(isPlayers){
-            rend.material.color = Color.blue;
+            if(activated) rend.material.color = Color.blue;
+            else rend.material.color = new Color(0.43f, 0.43f, 0.75f);
         }
-        else rend.material.color = Color.red;
+        else{
+            if(activated) rend.material.color = Color.red;
+            else rend.material.color = new Color(0.75f, 0.43f, 0.43f);
+        }
     }
 
     public void SoldierPlaced(){
+        if(!this.gameObject.activeInHierarchy) return;
         if(isPlayers){
             goalTarget = matchManager.playerGoalTarget;
         }
@@ -95,6 +110,10 @@ public abstract class Soldiers : MonoBehaviour
     public void RemoveSoldier(){
         matchManager.RemoveSoldier(this, isAttacker);
         this.gameObject.SetActive(false);
+    }
+
+    private void StopMoving(){
+        isMoving = false;
     }
 
     public abstract void AssignStartValue();

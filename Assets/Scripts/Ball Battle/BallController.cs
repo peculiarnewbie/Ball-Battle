@@ -25,10 +25,18 @@ public class BallController : MonoBehaviour
         isbeingPassed = false;
 
         SpawnBall();
+        matchManager.OnScore += DisableRenderer;
+        matchManager.OnMatchStart += SpawnBall;
     }
 
     private void FixedUpdate() {
         if(isMoving) MoveToTarget();
+    }
+
+    private void DisableRenderer(){
+        Debug.Log("scoreball");
+        isMoving = false;
+        rend.enabled = false;
     }
 
     private void MoveToTarget(){
@@ -52,12 +60,16 @@ public class BallController : MonoBehaviour
         if(matchManager.isBallHeld) return;
         if(other.CompareTag("Soldier")){
             Attackers attacker = other.gameObject.GetComponent<Attackers>();
-            if(attacker == null) return;
-            attacker.isHoldingBall = true;
-            targetTransform = other.transform;
-            matchManager.ChangeBallPickup(true);
-            isMoving = true;
+            AttachToAttacker(attacker);
         }
+    }
+    
+    public void AttachToAttacker(Soldiers attacker){
+        if(attacker == null) return;
+        attacker.isHoldingBall = true;
+        targetTransform = attacker.transform;
+        matchManager.ChangeBallPickup(true);
+        isMoving = true;
     }
 
     public void SpawnBall(){
