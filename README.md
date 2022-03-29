@@ -1,3 +1,3 @@
 # Ball Battle
 
-![basic view](./Assets/UI/"BallBattle demo.gif")
+![basic view](./Assets/UI/BallBattle demo.gif)
