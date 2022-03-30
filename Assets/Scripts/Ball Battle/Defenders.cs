@@ -17,7 +17,7 @@ public class Defenders : Soldiers
     }
 
     private void FixedUpdate() {
-        rangeIndicator.transform.position = origin;
+        rangeIndicator.transform.position = new Vector3( origin.x, rangeIndicator.transform.position.y, origin.z);
         if(isBeingPlaced) return;
         if(isChasing && !matchManager.ballController.isbeingPassed) ChaseSoldier();
         else if(!CheckIfOnOrigin()) MoveToTarget(fastSpeed, origin);

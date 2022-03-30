@@ -13,12 +13,14 @@ public class UIController : MonoBehaviour
     [SerializeField] Text timeText;
     [SerializeField] GameObject resultUI;
     [SerializeField] Text resultText;
+    GameManager gameManager;
     MatchManager matchManager;
 
     // Start is called before the first frame update
     void Start()
     {
         matchManager = MatchManager.Instance;
+        gameManager = GameManager.Instance;
 
         resultUI.SetActive(false);
 
@@ -63,6 +65,14 @@ public class UIController : MonoBehaviour
                 resultText.text = "Enemy Wins";
                 break;
         }
+    }
+
+    public void MoveToARScene(){
+        gameManager.MoveToARScene();
+    }
+
+    public void MovetoNormalScne(){
+        gameManager.MovetoNormalScne();        
     }
 }
 

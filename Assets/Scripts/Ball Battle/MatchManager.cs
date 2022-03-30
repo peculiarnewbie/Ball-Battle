@@ -17,6 +17,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
 
 
     private InputManager inputManager;
+    private GameManager gameManager;
     public Camera mainCamera;
     [SerializeField] CameraController camController;
 
@@ -55,13 +56,19 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
     public Collider playerField;
     public Collider enemyField;
 
-    void Start()
+    public void Start()
     {
         playerField = GameObject.FindGameObjectWithTag("Player Field").GetComponent<Collider>();
         enemyField = GameObject.FindGameObjectWithTag("Enemy Field").GetComponent<Collider>();
         ballController = ballTransform.GetComponent<BallController>();
+        gameManager = GameManager.Instance;
 
-        // mainCamera = Camera.main;
+        if(!gameManager.isInAR){
+            mainCamera = Camera.main;
+        }
+        else{
+            mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        }
         inputManager = InputManager.Instance;
         inputManager.OnStartTouch += StartPlacing;
         inputManager.OnEndTouch += PlaceSoldier;
@@ -219,7 +226,7 @@ public class MatchManager : MonoBehaviourSingleton<MatchManager>
         // if(!isFirst && !isPlacing) return (false, Vector3.zero);
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(inputManager.GetPosition());
-        if(Physics.Raycast(ray, out hit, 100.0f)){
+        if(Physics.Raycast(ray, out hit, 1000.0f)){
             if(hit.collider == playerField){
                 if(isFirst) GetSoldier(true, hit.point);
                 if(soldierToPlaceScript?.isPlayers == true) return (true, hit.point);
